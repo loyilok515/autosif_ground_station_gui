@@ -494,7 +494,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLCDNumber" name="follower_GPS_lat"/>
+           <widget class="QLCDNumber" name="follower_GPS_lat">
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -519,7 +523,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLCDNumber" name="follower_GPS_lon"/>
+           <widget class="QLCDNumber" name="follower_GPS_lon">
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -544,7 +552,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLCDNumber" name="follower_GPS_alt"/>
+           <widget class="QLCDNumber" name="follower_GPS_alt">
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -618,7 +630,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLCDNumber" name="follower_target_lat"/>
+           <widget class="QLCDNumber" name="follower_target_lat">
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -643,7 +659,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLCDNumber" name="follower_target_lon"/>
+           <widget class="QLCDNumber" name="follower_target_lon">
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -668,7 +688,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLCDNumber" name="follower_target_alt"/>
+           <widget class="QLCDNumber" name="follower_target_alt">
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -742,7 +766,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLCDNumber" name="follower_rel_x"/>
+           <widget class="QLCDNumber" name="follower_rel_x">
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -767,7 +795,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLCDNumber" name="follower_rel_y"/>
+           <widget class="QLCDNumber" name="follower_rel_y">
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -792,7 +824,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLCDNumber" name="follower_rel_z"/>
+           <widget class="QLCDNumber" name="follower_rel_z">
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -866,7 +902,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLCDNumber" name="follower_target_rel_x"/>
+           <widget class="QLCDNumber" name="follower_target_rel_x">
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -891,7 +931,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLCDNumber" name="follower_target_rel_y"/>
+           <widget class="QLCDNumber" name="follower_target_rel_y">
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -916,7 +960,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLCDNumber" name="follower_target_rel_z"/>
+           <widget class="QLCDNumber" name="follower_target_rel_z">
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -990,7 +1038,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLCDNumber" name="home_GPS_lat"/>
+           <widget class="QLCDNumber" name="home_GPS_lat">
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -1015,7 +1067,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLCDNumber" name="home_GPS_lon"/>
+           <widget class="QLCDNumber" name="home_GPS_lon">
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -1040,7 +1096,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLCDNumber" name="home_GPS_alt"/>
+           <widget class="QLCDNumber" name="home_GPS_alt">
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -1163,12 +1223,12 @@
        <rect>
         <x>110</x>
         <y>0</y>
-        <width>31</width>
+        <width>41</width>
         <height>31</height>
        </rect>
       </property>
       <property name="digitCount">
-       <number>1</number>
+       <number>2</number>
       </property>
      </widget>
      <widget class="QLabel" name="label_41">

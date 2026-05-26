@@ -84,7 +84,12 @@ class CommonData(): # store the data from the ROS nodes
         self.target_global_pos.latitude = latitude
         self.target_global_pos.longitude = longitude
         self.target_global_pos.altitude = altitude
-        local_x, local_y, local_z = self.global_to_local(latitude, longitude, altitude)
+        self.lock.unlock()
+        return
+    
+    def update_target_local_pos(self, local_x, local_y, local_z):
+        if not self.lock.tryLock():
+            return
         self.target_local_pos.x = local_x
         self.target_local_pos.y = local_y
         self.target_local_pos.z = local_z
@@ -294,7 +299,7 @@ class MapView(QGraphicsView):
         super().__init__(parent)
         self.map_offset_x = 0.0
         self.map_offset_y = 0.0
-        self.scale_factor = 1.0  # 1 pixel/m
+        self.scale_factor = 10.0  # pixels/m
 
         # Setup scene
         self.scene = QGraphicsScene(self)
@@ -334,12 +339,12 @@ class MapView(QGraphicsView):
 
     def map_to_local(self, x, y):
         local_x = (x - self.map_offset_x) / self.scale_factor
-        local_y = (y - self.map_offset_y) / self.scale_factor
+        local_y = -(y - self.map_offset_y) / self.scale_factor
         return local_x, local_y
 
     def local_to_map(self, local_x, local_y):
         x = local_x * self.scale_factor + self.map_offset_x
-        y = local_y * self.scale_factor + self.map_offset_y
+        y = -(local_y * self.scale_factor + self.map_offset_y)
         return x, y
 
     # ─── Zoom ─────────────────────────────────────────────────────────────────

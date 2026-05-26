@@ -27,8 +27,9 @@ class AutoSIFRosNode(Node, QObject):
             )
         
         # Define subscribers
-        self.create_subscription(NavSatFix, "/ga_planner/current_fix", self.current_fix_callback, self.qos_profile)
+        self.create_subscription(NavSatFix, "/ga_planner/current_fix", self.current_fix_callback, 10)
         self.create_subscription(NavSatFix, "/ga_planner/next_waypoint_navinfo", self.target_fix_callback, self.qos_profile)
+        self.create_subscription(PointStamped, "ga_planner/next_waypoint", self.target_local_pos_callback, self.qos_profile)
         self.create_subscription(NavSatFix, "/ga_planner/home_fix", self.home_fix_callback, self.qos_profile)
 
         self.create_subscription(String, "/ga_planner/drone_state", self.drone_state_callback, self.qos_profile)
@@ -45,6 +46,7 @@ class AutoSIFRosNode(Node, QObject):
         self.POI_clicked_pub = self.create_publisher(PointStamped, "/ga_planner/POI_candidate", 10)
         self.takeoff_request_pub = self.create_publisher(Empty, "/ga_planner/request_takeoff", 10)
         self.landing_request_pub = self.create_publisher(Empty, "/ga_planner/request_land", 10)
+        self.RTL_request_pub = self.create_publisher(Empty, "/ga_planner/request_RTL", 10)
 
         # Timer for main loop (will be started when thread runs)
         self.timer = None
@@ -64,6 +66,9 @@ class AutoSIFRosNode(Node, QObject):
 
     def target_fix_callback(self, msg):
         self.data_struct.update_target_pos(msg.latitude, msg.longitude, msg.altitude)
+
+    def target_local_pos_callback(self, msg):
+        self.data_struct.update_target_local_pos(msg.point.x, msg.point.y, msg.point.z)
     
     def home_fix_callback(self, msg):
         self.data_struct.update_home_global_pos(msg.latitude, msg.longitude, msg.altitude)
@@ -107,6 +112,10 @@ class AutoSIFRosNode(Node, QObject):
     def publish_landing_request(self):
         empty_msg = Empty()
         self.landing_request_pub.publish(empty_msg)
+    
+    def publish_RTL_request(self):
+        empty_msg = Empty()
+        self.RTL_request_pub.publish(empty_msg)
 
     # Timer callback for main loop
     def timer_callback(self):
@@ -166,6 +175,7 @@ class AutoSIFRosThread:
 
         self.ui.FollowerTakeoffButton.clicked.connect(self.send_takeoff_request)
         self.ui.FollowerLandButton.clicked.connect(self.send_land_request)
+        self.ui.FollowerHomeButton.clicked.connect(self.send_RTL_request)
         self.ui.FollowerEmergencyButton.clicked.connect(self.hold) 
         self.ui.ResetViewButton.clicked.connect(self.ui.map.reset_view)
 
@@ -191,29 +201,29 @@ class AutoSIFRosThread:
         # IMU data
 
         # Global position data
-        self.ui.follower_GPS_lat.display("{:.2f}".format(self.global_pos_msg.latitude, 2))
-        self.ui.follower_GPS_lon.display("{:.2f}".format(self.global_pos_msg.longitude, 2))
-        self.ui.follower_GPS_alt.display("{:.2f}".format(self.global_pos_msg.altitude, 2))
+        self.ui.follower_GPS_lat.display("{:.1f}".format(self.global_pos_msg.latitude, 2))
+        self.ui.follower_GPS_lon.display("{:.1f}".format(self.global_pos_msg.longitude, 2))
+        self.ui.follower_GPS_alt.display("{:.1f}".format(self.global_pos_msg.altitude, 2))
 
         # Local position data
-        self.ui.follower_rel_x.display("{:.2f}".format(self.local_pos_msg.x, 2))
-        self.ui.follower_rel_y.display("{:.2f}".format(self.local_pos_msg.y, 2))
-        self.ui.follower_rel_z.display("{:.2f}".format(self.local_pos_msg.z, 2))
+        self.ui.follower_rel_x.display("{:.1f}".format(self.local_pos_msg.x, 2))
+        self.ui.follower_rel_y.display("{:.1f}".format(self.local_pos_msg.y, 2))
+        self.ui.follower_rel_z.display("{:.1f}".format(self.local_pos_msg.z, 2))
 
         # Target position data
-        self.ui.follower_target_lat.display("{:.2f}".format(self.target_global_pos_msg.latitude, 2))
-        self.ui.follower_target_lon.display("{:.2f}".format(self.target_global_pos_msg.longitude, 2))
-        self.ui.follower_target_alt.display("{:.2f}".format(self.target_global_pos_msg.altitude, 2))
+        self.ui.follower_target_lat.display("{:.1f}".format(self.target_global_pos_msg.latitude, 2))
+        self.ui.follower_target_lon.display("{:.1f}".format(self.target_global_pos_msg.longitude, 2))
+        self.ui.follower_target_alt.display("{:.1f}".format(self.target_global_pos_msg.altitude, 2))
 
         # Target local position data
-        self.ui.follower_target_rel_x.display("{:.2f}".format(self.target_local_pos_msg.x, 2))
-        self.ui.follower_target_rel_y.display("{:.2f}".format(self.target_local_pos_msg.y, 2))
-        self.ui.follower_target_rel_z.display("{:.2f}".format(self.target_local_pos_msg.z, 2))
+        self.ui.follower_target_rel_x.display("{:.1f}".format(self.target_local_pos_msg.x, 2))
+        self.ui.follower_target_rel_y.display("{:.1f}".format(self.target_local_pos_msg.y, 2))
+        self.ui.follower_target_rel_z.display("{:.1f}".format(self.target_local_pos_msg.z, 2))
 
         # Home position data
-        self.ui.home_GPS_lat.display("{:.2f}".format(self.home_global_pos_msg.latitude, 2))
-        self.ui.home_GPS_lon.display("{:.2f}".format(self.home_global_pos_msg.longitude, 2))
-        self.ui.home_GPS_alt.display("{:.2f}".format(self.home_global_pos_msg.altitude, 2))
+        self.ui.home_GPS_lat.display("{:.1f}".format(self.home_global_pos_msg.latitude, 2))
+        self.ui.home_GPS_lon.display("{:.1f}".format(self.home_global_pos_msg.longitude, 2))
+        self.ui.home_GPS_alt.display("{:.1f}".format(self.home_global_pos_msg.altitude, 2))
 
         # State data
         self.ui.FollowerDroneState.setText(self.state_msg.drone_state)
@@ -242,6 +252,10 @@ class AutoSIFRosThread:
     def send_land_request(self):
         self.ros_object.publish_landing_request()
         self.log_message("Landing request sent.")
+
+    def send_RTL_request(self):
+        self.ros_object.publish_RTL_request()
+        self.log_message("RTL request sent.")
 
     def hold(self):
         pass
