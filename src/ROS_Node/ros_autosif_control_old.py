@@ -7,7 +7,7 @@ import Common
 
 # Import messages
 from std_msgs.msg import String, Int32MultiArray, Float32, Empty
-from geometry_msgs.msg import PointStamped, Polygon, PolygonStamped
+from geometry_msgs.msg import PointStamped, Polygon
 from sensor_msgs.msg import NavSatFix
 
 class AutoSIFRosNode(Node, QObject):
@@ -41,13 +41,6 @@ class AutoSIFRosNode(Node, QObject):
         self.create_subscription(Int32MultiArray, '/ga_planner/best_sequence', self.best_sequence_callback, self.qos_profile)
 
         self.create_subscription(Float32, '/ga_planner/sampling_time', self.sampling_time_callback, 10)
-
-        # Leader-survey overlays from poi_selection_node (local ENU, shared home)
-        self.create_subscription(PolygonStamped, '/poi_selection/ROI', self.roi_callback, self.qos_profile)
-        self.create_subscription(PolygonStamped, '/poi_selection/safe_region', self.safe_region_callback, 10)
-        self.create_subscription(PolygonStamped, '/poi_selection/image_frame', self.image_frame_callback, 10)
-        self.create_subscription(PolygonStamped, '/poi_selection/pending_POIs', self.pending_poi_callback, 10)
-        self.create_subscription(NavSatFix, "/leader/image_centre", self.image_centre_callback, 10)
 
         # Define publishers
         self.POI_clicked_pub = self.create_publisher(PointStamped, "/ga_planner/POI", 10)
@@ -103,26 +96,6 @@ class AutoSIFRosNode(Node, QObject):
 
     def sampling_time_callback(self, msg):
         self.data_struct.update_sampling_time(msg.data)
-
-    def roi_callback(self, msg):
-        pts = [(p.x, p.y) for p in msg.polygon.points]
-        self.data_struct.update_roi(pts)
-
-    def safe_region_callback(self, msg):
-        pts = [(p.x, p.y) for p in msg.polygon.points]
-        self.data_struct.update_safe_region(pts)
-
-    def image_frame_callback(self, msg):
-        # points 0-3 = footprint corners, point 4 = image centre (leader position)
-        pts = [(p.x, p.y) for p in msg.polygon.points]
-        self.data_struct.update_leader_frame(pts)
-
-    def pending_poi_callback(self, msg):
-        pts = [(p.x, p.y) for p in msg.polygon.points]
-        self.data_struct.update_pending_pois(pts)
-
-    def image_centre_callback(self, msg):
-        self.data_struct.update_leader_global_pos(msg.longitude, msg.latitude, msg.altitude)
     
     def publish_POI(self, new_POI):
         point_msg = PointStamped()
@@ -223,11 +196,6 @@ class AutoSIFRosThread:
         self.state_msg = self.ros_object.data_struct.current_state
         self.POI_info_msg = self.ros_object.data_struct.current_POI_info
         self.sampling_time_msg = self.ros_object.data_struct.sampling_time
-        self.roi_local = self.ros_object.data_struct.roi_local
-        self.safe_region_local = self.ros_object.data_struct.safe_region_local
-        self.leader_frame_local = self.ros_object.data_struct.leader_frame_local
-        self.pending_pois_local = self.ros_object.data_struct.pending_pois_local
-        self.leader_global_pos = self.ros_object.data_struct.leader_global_pos
         self.lock.unlock()
 
         # IMU data
@@ -251,11 +219,6 @@ class AutoSIFRosThread:
         self.ui.follower_target_rel_x.display("{:.1f}".format(self.target_local_pos_msg.x, 2))
         self.ui.follower_target_rel_y.display("{:.1f}".format(self.target_local_pos_msg.y, 2))
         self.ui.follower_target_rel_z.display("{:.1f}".format(self.target_local_pos_msg.z, 2))
-
-        # Leader position data
-        self.ui.leader_GPS_lat.display("{:.1f}".format(self.leader_global_pos.latitude, 2))
-        self.ui.leader_GPS_lon.display("{:.1f}".format(self.leader_global_pos.longitude, 2))
-        self.ui.leader_GPS_alt.display("{:.1f}".format(self.leader_global_pos.altitude, 2))
 
         # Home position data
         self.ui.home_GPS_lat.display("{:.1f}".format(self.home_global_pos_msg.latitude, 2))
@@ -313,21 +276,6 @@ class AutoSIFRosThread:
     def update_mission_map(self):
         # Draw home
         self.ui.map.draw_home(self.home_local_pos_msg.x, self.home_local_pos_msg.y)
-
-        # ── Leader-survey overlays (drawn first so markers sit on top) ─────────
-        self.ui.map.draw_roi(self.roi_local)
-        self.ui.map.draw_safe_region(self.safe_region_local)
-
-        # Image frame: corners 0-3 shade the FoV; point 4 is the leader position.
-        frame = self.leader_frame_local
-        if frame and len(frame) >= 4:
-            self.ui.map.draw_leader_fov(frame[:4])
-        if frame and len(frame) >= 5:
-            leader_x, leader_y = frame[4]
-            self.ui.map.draw_leader_drone(leader_x, leader_y)
-
-        # Pending POIs (lighter shade than the confirmed/clicked ones)
-        self.ui.map.draw_pending_pois(self.pending_pois_local)
 
         # Draw current follower drone position
         self.ui.map.draw_follower_drone(self.local_pos_msg.x, self.local_pos_msg.y)

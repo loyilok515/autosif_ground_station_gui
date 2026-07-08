@@ -59,118 +59,6 @@
      <attribute name="title">
       <string>Live status (Leader)</string>
      </attribute>
-     <widget class="QWidget" name="horizontalLayoutWidget_2">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>30</y>
-        <width>286</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <layout class="QHBoxLayout" name="Leader_horizontalLayout">
-       <item>
-        <layout class="QVBoxLayout" name="LatitudeverticalLayout_2" stretch="1,2">
-         <item>
-          <widget class="QLabel" name="label_8">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="mouseTracking">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>Lat (deg)</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLCDNumber" name="leader_GPS_x"/>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="LongtitudeverticalLayout_2" stretch="1,2">
-         <item>
-          <widget class="QLabel" name="label_9">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="mouseTracking">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>Long (deg)</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLCDNumber" name="leader_GPS_y"/>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="AltitudeverticalLayout_2" stretch="1,2">
-         <item>
-          <widget class="QLabel" name="label_10">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="mouseTracking">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>Alt (m)</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLCDNumber" name="leader_GPS_z"/>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="GroundspeedverticalLayout_2" stretch="1,2">
-         <item>
-          <widget class="QLabel" name="label_12">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="mouseTracking">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>GS (m/s)</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLCDNumber" name="leader_GPS_GS"/>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
      <widget class="QLabel" name="label_13">
       <property name="geometry">
        <rect>
@@ -189,110 +77,277 @@
        <string>Leader UAV</string>
       </property>
      </widget>
-     <widget class="QWidget" name="horizontalLayoutWidget_4">
+     <widget class="QFrame" name="frame_7">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>210</y>
+        <x>10</x>
+        <y>140</y>
         <width>291</width>
-        <height>61</height>
+        <height>91</height>
        </rect>
       </property>
-      <layout class="QHBoxLayout" name="HomeCoordinates_horizontalLayout">
-       <item>
-        <layout class="QVBoxLayout" name="LatitudeverticalLayout_4" stretch="1,2">
-         <item>
-          <widget class="QLabel" name="label_16">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="mouseTracking">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>Lat (deg)</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLCDNumber" name="home_x"/>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="LongtitudeverticalLayout_4" stretch="1,2">
-         <item>
-          <widget class="QLabel" name="label_17">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="mouseTracking">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>Long (deg)</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLCDNumber" name="home_y"/>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="AltitudeverticalLayout_4" stretch="1,2">
-         <item>
-          <widget class="QLabel" name="label_18">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="mouseTracking">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>Alt (m)</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLCDNumber" name="home_z"/>
-         </item>
-        </layout>
-       </item>
-      </layout>
+      <property name="frameShape">
+       <enum>QFrame::Box</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <property name="lineWidth">
+       <number>1</number>
+      </property>
+      <widget class="QLabel" name="label_42">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>0</y>
+         <width>221</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Current position (relative)</string>
+       </property>
+      </widget>
+      <widget class="QWidget" name="horizontalLayoutWidget_7">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>30</y>
+         <width>291</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="Follower_horizontalLayout_7">
+        <item>
+         <layout class="QVBoxLayout" name="LatitudeverticalLayout_7" stretch="1,2">
+          <item>
+           <widget class="QLabel" name="label_8">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+            <property name="mouseTracking">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>x (m)</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLCDNumber" name="leader_rel_x">
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="LongtitudeverticalLayout_7" stretch="1,2">
+          <item>
+           <widget class="QLabel" name="label_43">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+            <property name="mouseTracking">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>y (m)</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLCDNumber" name="leader_rel_y">
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="AltitudeverticalLayout_7" stretch="1,2">
+          <item>
+           <widget class="QLabel" name="label_44">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+            <property name="mouseTracking">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>z (m)</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLCDNumber" name="leader_rel_z">
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
      </widget>
-     <widget class="QLabel" name="label_19">
+     <widget class="QFrame" name="frame_6">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>185</y>
-        <width>101</width>
-        <height>21</height>
+        <x>10</x>
+        <y>40</y>
+        <width>291</width>
+        <height>91</height>
        </rect>
       </property>
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-       </font>
+      <property name="frameShape">
+       <enum>QFrame::Box</enum>
       </property>
-      <property name="text">
-       <string>Home</string>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
       </property>
+      <property name="lineWidth">
+       <number>1</number>
+      </property>
+      <widget class="QLabel" name="label_33">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>0</y>
+         <width>261</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Current position (global)</string>
+       </property>
+      </widget>
+      <widget class="QWidget" name="horizontalLayoutWidget_2">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>30</y>
+         <width>291</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="Follower_horizontalLayout_5">
+        <item>
+         <layout class="QVBoxLayout" name="LatitudeverticalLayout_2" stretch="1,2">
+          <item>
+           <widget class="QLabel" name="label_7">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+            <property name="mouseTracking">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Lat (deg)</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLCDNumber" name="leader_GPS_lat">
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="LongtitudeverticalLayout_2" stretch="1,2">
+          <item>
+           <widget class="QLabel" name="label_34">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+            <property name="mouseTracking">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Long (deg)</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLCDNumber" name="leader_GPS_lon">
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="AltitudeverticalLayout_2" stretch="1,2">
+          <item>
+           <widget class="QLabel" name="label_35">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+            <property name="mouseTracking">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Alt (m)</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLCDNumber" name="leader_GPS_alt">
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </widget>
     <widget class="QWidget" name="tab_7">

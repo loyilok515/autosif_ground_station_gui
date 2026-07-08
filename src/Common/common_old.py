@@ -24,7 +24,7 @@ SOFTWARE.
 #!/usr/bin/env python
 from PyQt5.QtCore import QMutex, Qt, pyqtSignal, QPointF
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsEllipseItem, QGraphicsTextItem
-from PyQt5.QtGui import QBrush, QPen, QColor, QFont, QWheelEvent, QPolygonF
+from PyQt5.QtGui import QBrush, QPen, QColor, QFont, QWheelEvent
 
 import ROS_Node.ros_common as ros_common
 import numpy as np
@@ -49,13 +49,6 @@ class CommonData(): # store the data from the ROS nodes
         self.current_POI_info = ros_common.POI_info()
 
         self.sampling_time = 0.0
-
-        # Leader-survey overlays (all in local ENU coords, shared home assumed)
-        self.roi_local = []            # [(x, y), ...]
-        self.safe_region_local = []    # [(x, y), ...]
-        self.leader_frame_local = []   # [c0, c1, c2, c3, centre]  (centre = leader pos)
-        self.pending_pois_local = []   # [(x, y), ...]
-        self.leader_global_pos = ros_common.GlobalPositionInfo()  # Leader UAV GPS position
 
         self.lock = QMutex()
 
@@ -100,15 +93,6 @@ class CommonData(): # store the data from the ROS nodes
         self.target_local_pos.x = local_x
         self.target_local_pos.y = local_y
         self.target_local_pos.z = local_z
-        self.lock.unlock()
-        return
-
-    def update_leader_global_pos(self, latitude, longitude, altitude):
-        if not self.lock.tryLock():
-            return
-        self.leader_global_pos.latitude = latitude
-        self.leader_global_pos.longitude = longitude
-        self.leader_global_pos.altitude = altitude
         self.lock.unlock()
         return
 
@@ -170,30 +154,6 @@ class CommonData(): # store the data from the ROS nodes
         if not self.lock.tryLock():
             return
         self.sampling_time = sampling_time
-        self.lock.unlock()
-
-    def update_roi(self, roi_local):
-        if not self.lock.tryLock():
-            return
-        self.roi_local = roi_local
-        self.lock.unlock()
-
-    def update_safe_region(self, safe_region_local):
-        if not self.lock.tryLock():
-            return
-        self.safe_region_local = safe_region_local
-        self.lock.unlock()
-
-    def update_leader_frame(self, leader_frame_local):
-        if not self.lock.tryLock():
-            return
-        self.leader_frame_local = leader_frame_local
-        self.lock.unlock()
-
-    def update_pending_pois(self, pending_pois_local):
-        if not self.lock.tryLock():
-            return
-        self.pending_pois_local = pending_pois_local
         self.lock.unlock()
 
     def update_imu(self, x, y, z, w):
@@ -368,14 +328,6 @@ class MapView(QGraphicsView):
         self.best_seq_lines = []
         self.temp_poi_markers = []
 
-        # ── Leader-survey overlays ────────────────────────────────────────────
-        self.roi_item = None
-        self.safe_region_item = None
-        self.leader_fov_item = None
-        self.leader_marker = None
-        self.leader_label = None
-        self.pending_poi_markers = []
-
     # ─── Coordinate helpers ───────────────────────────────────────────────────
 
     def update_map_offset(self, offset_x, offset_y):
@@ -520,92 +472,6 @@ class MapView(QGraphicsView):
             QBrush(QColor("#3498db"))
         )
         self.drone_marker.setZValue(10)
-
-    # ─── Leader-survey overlays ───────────────────────────────────────────────
-
-    def _local_polygon(self, points_local):
-        """Build a scene-space QPolygonF from a list of local (x, y[, z]) points."""
-        qpoly = QPolygonF()
-        for p in points_local:
-            map_x, map_y = self.local_to_map(p[0], p[1])
-            qpoly.append(QPointF(map_x, map_y))
-        return qpoly
-
-    def draw_roi(self, roi_local):
-        """ROI boundary in local coords (dashed purple outline, faint fill)."""
-        self._remove_item(self.roi_item)
-        self.roi_item = None
-        if not roi_local or len(roi_local) < 3:
-            return
-        self.roi_item = self.scene.addPolygon(
-            self._local_polygon(roi_local),
-            QPen(QColor("#8e44ad"), 2, Qt.DashLine),
-            QBrush(QColor(142, 68, 173, 25)),      # translucent purple
-        )
-        self.roi_item.setZValue(0)                 # behind everything
-
-    def draw_safe_region(self, safe_local):
-        """Safe visited region (translucent green fill)."""
-        self._remove_item(self.safe_region_item)
-        self.safe_region_item = None
-        if not safe_local or len(safe_local) < 3:
-            return
-        self.safe_region_item = self.scene.addPolygon(
-            self._local_polygon(safe_local),
-            QPen(QColor("#27ae60"), 1, Qt.SolidLine),
-            QBrush(QColor(46, 204, 113, 50)),      # translucent green
-        )
-        self.safe_region_item.setZValue(1)
-
-    def draw_leader_fov(self, fov_corners_local):
-        """Leader sensor footprint (translucent blue fill). Pass the 4 corners."""
-        self._remove_item(self.leader_fov_item)
-        self.leader_fov_item = None
-        if not fov_corners_local or len(fov_corners_local) < 3:
-            return
-        self.leader_fov_item = self.scene.addPolygon(
-            self._local_polygon(fov_corners_local),
-            QPen(QColor("#2980b9"), 1, Qt.SolidLine),
-            QBrush(QColor(52, 152, 219, 60)),      # translucent blue
-        )
-        self.leader_fov_item.setZValue(3)
-
-    def draw_leader_drone(self, local_x, local_y):
-        """Leader UAV current position (orange marker)."""
-        self._remove_item(self.leader_marker)
-        self._remove_item(self.leader_label)
-
-        map_x, map_y = self.local_to_map(local_x, local_y)
-        size = 12
-        self.leader_marker = self.scene.addEllipse(
-            map_x - size / 2, map_y - size / 2, size, size,
-            QPen(QColor("#c0392b"), 2),
-            QBrush(QColor("#e67e22")),
-        )
-        self.leader_marker.setZValue(11)
-
-        self.leader_label = self.scene.addText("LEADER")
-        self.leader_label.setDefaultTextColor(QColor("#e67e22"))
-        font = QFont(); font.setBold(True); font.setPointSize(8)
-        self.leader_label.setFont(font)
-        self.leader_label.setPos(map_x + size, map_y - size)
-        self.leader_label.setZValue(11)
-
-    def draw_pending_pois(self, pending_local):
-        """Pending (not-yet-released) POIs — even lighter than unvisited POIs."""
-        self._remove_items(self.pending_poi_markers)
-        if not pending_local:
-            return
-        size = 10
-        pen   = QPen(QColor(241, 196, 15, 110), 1, Qt.DashLine)   # faint yellow
-        brush = QBrush(QColor(241, 196, 15, 35))                  # very light fill
-        for p in pending_local:
-            map_x, map_y = self.local_to_map(p[0], p[1])
-            marker = self.scene.addEllipse(
-                map_x - size / 2, map_y - size / 2, size, size, pen, brush
-            )
-            marker.setZValue(4)
-            self.pending_poi_markers.append(marker)
 
     # ─── Draw POIs ────────────────────────────────────────────────────────────
 
