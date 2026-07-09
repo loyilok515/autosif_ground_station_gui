@@ -6,5 +6,4 @@
 
 ## How to use
 
-- make sure the roscore has been launched
-- run `src/GroundControl.py` to start the ground station GUI
+- run `python3 src/GroundControl.py` to start the ground station GUI
